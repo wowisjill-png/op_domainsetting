@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domain Setting 域名管理系統</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 18px;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 10px;
+    }
+    .form-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+    label {
+      font-size: 14px;
+      color: #333;
+    }
+    select, input, button {
+      padding: 8px 10px;
+      font-size: 14px;
+    }
+    select, input {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      min-width: 180px;
+    }
+    .info {
+      display: inline-block;
+      min-width: 180px;
+      padding: 8px 0;
+      font-weight: bold;
+    }
+    button {
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #1976d2;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Domain Setting 域名管理系統</h1>
+
+<!-- Global Website Filter -->
+<div class="card">
+  <h2>Global Website Filter</h2>
+  <div class="form-row">
+    <label>
+      Website<br />
+      <select id="globalWebsite">
+        <option value="">Select website</option>
+        <option value="Home">Home</option>
+        <option value="Au01">Au01</option>
+        <option value="Au02">Au02</option>
+        <option value="Au03">Au03</option>
+        <option value="JP01">JP01</option>
+        <option value="JP02">JP02</option>
+        <option value="JP03">JP03</option>
+      </select>
+    </label>
+    <button class="btn-primary" id="globalSearchBtn">Search</button>
+  </div>
+</div>
+
+<!-- Website Domain Setting -->
+<div class="card">
+  <h2>Website Domain Setting</h2>
+  <div class="form-row">
+    <label>Website<br /><span class="info website-display"></span></label>
+    <label>FromRootDomain<br /><span class="info" id="fromRoot"></span></label>
+    <label>
+      ToRootDomain<br />
+      <select id="siteToRoot">
+        <option>0-hello.com</option>
+        <option>1-hello.com</option>
+        <option>2-hello.com</option>
+        <option>3-hello.com</option>
+      </select>
+    </label>
+    <button class="btn-primary" id="siteUpdateBtn">Update</button>
+    <span id="siteGlobalMsg" style="margin-left:8px;display:none;"></span>
+  </div>
+</div>
+
+<!-- Country Domain Setting -->
+<div class="card">
+  <h2>Country Domain Setting</h2>
+  <!-- Search Row -->
+  <div class="form-row">
+    <label>Website<br /><span class="info website-display"></span></label>
+    <label>Country<br />
+      <select id="countrySelect">
+        <option value="">Select country</option>
+        <option value="AS">AS (American Samoa)</option>
+        <option value="AD">AD (Andorra)</option>
+        <option value="AO">AO (Angola)</option>
+        <option value="AI">AI (Anguilla)</option>
+        <option value="AQ">AQ (Antractica)</option>
+        <option value="AG">AG (Antigua and Barbuda)</option>
+        <option value="AR">AR (Argentina)</option>
+      </select>
+    </label>
+    <button class="btn-primary" id="countrySearchBtn">Search</button>
+    <span id="countryGlobalMsg" style="margin-left:8px;display:none;"></span>
+  </div>
+
+  <!-- Result Row -->
+  <div class="form-row" id="countryResult" style="display:none;">
+    <label>Website<br /><span class="info website-display"></span></label>
+    <label>Country<br /><span class="info" id="countryResultCode"></span></label>
+    <label>Now Root Domain<br /><span class="info" id="countryNowDomain"></span></label>
+    <label>
+      To Root Domain<br />
+      <select id="countryToRoot">
+        <option>0-hello.com</option>
+        <option>1-hello.com</option>
+        <option>2-hello.com</option>
+        <option>3-hello.com</option>
+      </select>
+    </label>
+    <button class="btn-primary" id="countryUpdateBtn">Update</button>
+    <button id="countryDeleteBtn">Delete</button>
+  </div>
+</div>
+
+<!-- Agent Domain Setting -->
+<div class="card">
+  <h2>Agent Domain Setting</h2>
+  <!-- Search Row -->
+  <div class="form-row">
+    <label>Website<br /><span class="info website-display"></span></label>
+    <label>Agent ID<br /><input type="text" id="agentIdInput" placeholder="Enter Agent ID" /></label>
+    <button class="btn-primary" id="agentSearchBtn">Search</button>
+    <span id="agentGlobalMsg" style="margin-left:8px;display:none;"></span>
+  </div>
+
+  <!-- Result Row -->
+  <div class="form-row" id="agentResult" style="display:none;">
+    <label>Website<br /><span class="info website-display"></span></label>
+    <label>Agent<br /><span class="info" id="agentResultId"></span></label>
+    <label>Now Root Domain<br /><span class="info" id="agentNowDomain">oooo.net-CloudFront</span></label>
+    <label>
+      To Root Domain<br />
+      <select id="agentToRoot">
+        <option>0-hello.com</option>
+        <option>1-hello.com</option>
+        <option>2-hello.com</option>
+        <option>3-hello.com</option>
+      </select>
+    </label>
+    <button class="btn-primary" id="agentUpdateBtn">Update</button>
+    <button id="agentDeleteBtn">Delete</button>
+  </div>
+</div>
+
+<!-- User Domain Setting -->
+<div class="card">
+  <h2>User Domain Setting</h2>
+  <!-- Search Row -->
+  <div class="form-row">
+    <label>Website<br /><span class="info website-display"></span></label>
+    <label>User ID<br /><input type="text" id="userIdInput" placeholder="Enter User ID" /></label>
+    <button class="btn-primary" id="userSearchBtn">Search</button>
+    <span id="userGlobalMsg" style="margin-left:8px;display:none;"></span>
+  </div>
+
+  <!-- Result Row -->
+  <div class="form-row" id="userResult" style="display:none;">
+    <label>Website<br /><span class="info website-display"></span></label>
+    <label>User ID<br /><span class="info" id="userResultId"></span></label>
+    <label>FromRootDomain<br /><span class="info" id="userFromRoot"></span></label>
+    <label>DomainURL (DomainCache)<br /><span class="info">example.domain.cache</span></label>
+    <label>
+      To Root Domain<br />
+      <select id="userToRoot">
+        <option>0-hello.com</option>
+        <option>1-hello.com</option>
+        <option>2-hello.com</option>
+        <option>3-hello.com</option>
+      </select>
+    </label>
+    <button class="btn-primary" id="userUpdateBtn">Update</button>
+    <button id="userDeleteBtn">Delete</button>
+  </div>
+</div>
+
+<script>
+  const websiteSelect = document.getElementById('globalWebsite');
+  const websiteDisplays = document.querySelectorAll('.website-display');
+  const fromRoot = document.getElementById('fromRoot');
+
+  // 隨機 root domain pool
+  const randomRootPool = [
+    'oooo.net-CloudFront',
+    'kkkkk.net-CloudFront',
+    'xxxx.net-CloudFront',
+    'gggg.net-CloudFront'
+  ];
+
+  function getRandomRoot() {
+    return randomRootPool[Math.floor(Math.random() * randomRootPool.length)];
+  }
+
+  function syncWebsite() {
+    const value = websiteSelect.value;
+    websiteDisplays.forEach(el => el.textContent = value);
+    fromRoot.textContent = getRandomRoot();
+    // reset website-level message when switching website
+    const siteGlobalMsg = document.getElementById('siteGlobalMsg');
+    if (siteGlobalMsg) siteGlobalMsg.style.display = 'none';
+  }
+
+  // Global Search 功能
+  const globalSearchBtn = document.getElementById('globalSearchBtn');
+  
+  function handleGlobalSearch() {
+    const selectedSite = websiteSelect.value;
+    if (!selectedSite) {
+      alert('Please select a website first!');
+      return;
+    }
+    
+    // 同步所有 website 顯示
+    websiteDisplays.forEach(el => {
+      if (el) el.textContent = selectedSite;
+    });
+    if (fromRoot) fromRoot.textContent = getRandomRoot();
+    
+    // 清除訊息
+    const siteGlobalMsg = document.getElementById('siteGlobalMsg');
+    if (siteGlobalMsg) siteGlobalMsg.style.display = 'none';
+    
+    console.log('Global search executed for:', selectedSite);
+  }
+  
+  if (globalSearchBtn) {
+    globalSearchBtn.addEventListener('click', handleGlobalSearch);
+  }
+
+  websiteSelect.addEventListener('change', syncWebsite);
+  syncWebsite();
+
+  // Website Domain Setting Update
+  const siteToRoot = document.getElementById('siteToRoot');
+  const siteUpdateBtn = document.getElementById('siteUpdateBtn');
+  const siteGlobalMsg = document.getElementById('siteGlobalMsg');
+
+  siteUpdateBtn.addEventListener('click', () => {
+    fromRoot.textContent = siteToRoot.value;
+    siteGlobalMsg.textContent = 'Update successful';
+    siteGlobalMsg.style.color = 'green';
+    siteGlobalMsg.style.display = 'inline';
+  });
+
+    // Agent search mock behavior
+  const agentSearchBtn = document.getElementById('agentSearchBtn');
+  const agentResult = document.getElementById('agentResult');
+  const agentResultId = document.getElementById('agentResultId');
+  const agentIdInput = document.getElementById('agentIdInput');
+  const agentUpdateBtn = document.getElementById('agentUpdateBtn');
+  const agentDeleteBtn = document.getElementById('agentDeleteBtn');
+  // agentMsg was undefined, use agentGlobalMsg instead
+  const agentGlobalMsg = document.getElementById('agentGlobalMsg');
+  const agentNowDomain = document.getElementById('agentNowDomain');
+  const agentToRoot = document.getElementById('agentToRoot');
+
+  agentSearchBtn.addEventListener('click', () => {
+    if (!agentIdInput.value) return;
+    agentResultId.textContent = agentIdInput.value;
+    agentNowDomain.textContent = getRandomRoot();
+    agentResult.style.display = 'flex';
+    agentGlobalMsg.style.display = 'none';
+  });
+
+  // Update action
+  agentUpdateBtn.addEventListener('click', () => {
+    agentNowDomain.textContent = agentToRoot.value;
+    agentGlobalMsg.textContent = 'Update successful';
+    agentGlobalMsg.style.color = 'green';
+    agentGlobalMsg.style.display = 'inline';
+  });
+
+  // Delete action
+
+  agentDeleteBtn.addEventListener('click', () => {
+    agentResult.style.display = 'none';
+    agentIdInput.value = '';
+    agentGlobalMsg.textContent = 'Delete successful';
+    agentGlobalMsg.style.color = 'red';
+    agentGlobalMsg.style.display = 'inline';
+  });
+  
+  // ===== User Domain Setting =====
+  const userSearchBtn = document.getElementById('userSearchBtn');
+  const userResult = document.getElementById('userResult');
+  const userIdInput = document.getElementById('userIdInput');
+  const userResultId = document.getElementById('userResultId');
+  const userFromRoot = document.getElementById('userFromRoot');
+  const userToRoot = document.getElementById('userToRoot');
+  const userUpdateBtn = document.getElementById('userUpdateBtn');
+  const userDeleteBtn = document.getElementById('userDeleteBtn');
+  const userGlobalMsg = document.getElementById('userGlobalMsg');
+
+  userSearchBtn.addEventListener('click', () => {
+    if (!userIdInput.value) return;
+    userResultId.textContent = userIdInput.value;
+    userFromRoot.textContent = getRandomRoot();
+    userResult.style.display = 'flex';
+    userGlobalMsg.style.display = 'none';
+  });
+
+  userUpdateBtn.addEventListener('click', () => {
+    userFromRoot.textContent = userToRoot.value;
+    userGlobalMsg.textContent = 'Update successful';
+    userGlobalMsg.style.color = 'green';
+    userGlobalMsg.style.display = 'inline';
+  });
+
+  userDeleteBtn.addEventListener('click', () => {
+    userResult.style.display = 'none';
+    userIdInput.value = '';
+    userGlobalMsg.textContent = 'Delete successful';
+    userGlobalMsg.style.color = 'red';
+    userGlobalMsg.style.display = 'inline';
+  });
+  
+  // ===== Country Domain Setting =====
+  const countrySelect = document.getElementById('countrySelect');
+  const countrySearchBtn = document.getElementById('countrySearchBtn');
+  const countryResult = document.getElementById('countryResult');
+  const countryResultCode = document.getElementById('countryResultCode');
+  const countryNowDomain = document.getElementById('countryNowDomain');
+  const countryToRoot = document.getElementById('countryToRoot');
+  const countryUpdateBtn = document.getElementById('countryUpdateBtn');
+  const countryDeleteBtn = document.getElementById('countryDeleteBtn');
+  const countryGlobalMsg = document.getElementById('countryGlobalMsg');
+
+  countrySearchBtn.addEventListener('click', () => {
+    if (!countrySelect.value) return;
+    countryResultCode.textContent = countrySelect.options[countrySelect.selectedIndex].text;
+    countryNowDomain.textContent = getRandomRoot();
+    countryResult.style.display = 'flex';
+    countryGlobalMsg.style.display = 'none';
+  });
+
+  countryUpdateBtn.addEventListener('click', () => {
+    countryNowDomain.textContent = countryToRoot.value;
+    countryGlobalMsg.textContent = 'Update successful';
+    countryGlobalMsg.style.color = 'green';
+    countryGlobalMsg.style.display = 'inline';
+  });
+
+  countryDeleteBtn.addEventListener('click', () => {
+    countryResult.style.display = 'none';
+    countrySelect.value = '';
+    countryGlobalMsg.textContent = 'Delete successful';
+    countryGlobalMsg.style.color = 'red';
+    countryGlobalMsg.style.display = 'inline';
+  });
+</script>
+
+</body>
+</html>
