@@ -12,7 +12,18 @@
       padding: 20px;
     }
     h1 {
-      margin-bottom: 20px;
+       margin: 8px 0 48px 0;
+      font-size: 24px;
+      height: 20px;
+      color: #000;
+    }
+    .website-title {
+      color: #1976d2;
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 0 0 18px 0;
+      display: inline-block;
+      text-decoration: underline;
     }
     .card {
       background: #ffffff;
@@ -23,7 +34,7 @@
     }
     .card h2 {
       margin-top: 0;
-      font-size: 18px;
+      font-size: 16px;
       border-bottom: 1px solid #e0e0e0;
       padding-bottom: 10px;
     }
@@ -64,39 +75,45 @@
     }
   </style>
 </head>
+
 <body>
 
-<h1>Domain Setting 域名管理系統</h1>
+<!-- Breadcrumb -->
+<nav style="width:100%;background:#f6f8fa;padding:18px 0 10px 0;margin-bottom:8px;">
+  <span style="color:#5a6b8a;font-size:14px;font-weight:400;letter-spacing:0.5px;">Website</span>
+  <span style="color:#5a6b8a;font-size:14px;font-weight:400;margin:0 12px;">&gt;</span>
+  <span style="color:#5a6b8a;font-size:14px;font-weight:400;">Domain Management</span>
+</nav>
 
-<!-- Global Website Filter -->
-<div class="card">
-  <h2>Global Website Filter</h2>
-  <div class="form-row">
-    <label>
-      Website<br />
-      <select id="globalWebsite">
-        <option value="">Select website</option>
-        <option value="Home">Home</option>
-        <option value="Au01">Au01</option>
-        <option value="Au02">Au02</option>
-        <option value="Au03">Au03</option>
-        <option value="JP01">JP01</option>
-        <option value="JP02">JP02</option>
-        <option value="JP03">JP03</option>
-      </select>
-    </label>
-    <button class="btn-primary" id="globalSearchBtn">Search</button>
-  </div>
+
+<h1 style="color:#000;font-size:24px;font-weight:500;">Domain Setting</h1>
+<div id="websiteTitleBlock" style="margin-top:0;margin-bottom:18px;display:none;">
+  <span id="websiteTitle" class="website-title"></span>
 </div>
 
+<!-- Global Website Filter -->
+<div style="margin-bottom:0;">
+  <select id="globalWebsite" style="width:320px;padding:14px 16px;font-size:1.1rem;border:1.5px solid #d1d5db;border-radius:10px;color:#6b7280;background:#fff;outline:none;">
+    <option value="">Select Website</option>
+    <option value="Home">Home</option>
+    <option value="Au01">Au01</option>
+    <option value="Au02">Au02</option>
+    <option value="Au03">Au03</option>
+    <option value="JP01">JP01</option>
+    <option value="JP02">JP02</option>
+    <option value="JP03">JP03</option>
+  </select>
+</div>
+<div style="width:100%;height:0;border-bottom:1.5px solid #e0e4ea;margin:16px 0 24px 0;"></div>
+<h2 id="selectedWebsiteTitle" style="margin-top:0;font-size:24px;font-weight:700;padding:8px 24px;display:none;color:#222;background:rgb(184, 195, 213);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);letter-spacing:0.5px;">Website</h2>
+
 <!-- Website Domain Setting -->
-<div class="card">
-  <h2>Website Domain Setting</h2>
+<div class="card" id="websiteDomainBlock" style="display:none;">
+  <h2>Website</h2>
   <div class="form-row">
-    <label>Website<br /><span class="info website-display"></span></label>
-    <label>FromRootDomain<br /><span class="info" id="fromRoot"></span></label>
+    <label>Now Root Domain<br /><span class="info" id="fromRoot"></span></label>
     <label>
-      ToRootDomain<br />
+      To Root Domain<br />
       <select id="siteToRoot">
         <option>0-hello.com</option>
         <option>1-hello.com</option>
@@ -114,39 +131,50 @@
   <h2>Country Domain Setting</h2>
   <!-- Search Row -->
   <div class="form-row">
-    <label>Website<br /><span class="info website-display"></span></label>
-    <label>Country<br />
-      <select id="countrySelect">
-        <option value="">Select country</option>
-        <option value="AS">AS (American Samoa)</option>
-        <option value="AD">AD (Andorra)</option>
-        <option value="AO">AO (Angola)</option>
-        <option value="AI">AI (Anguilla)</option>
-        <option value="AQ">AQ (Antractica)</option>
-        <option value="AG">AG (Antigua and Barbuda)</option>
-        <option value="AR">AR (Argentina)</option>
-      </select>
-    </label>
-    <button class="btn-primary" id="countrySearchBtn">Search</button>
+    <select id="countrySelect" style="padding:8px 10px;font-size:14px;border:1px solid #ccc;border-radius:4px;min-width:180px;">
+      <option value="">Select country</option>
+      <option value="AS">AS (American Samoa)</option>
+      <option value="AD">AD (Andorra)</option>
+      <option value="AO">AO (Angola)</option>
+      <option value="AI">AI (Anguilla)</option>
+      <option value="AQ">AQ (Antractica)</option>
+      <option value="AG">AG (Antigua and Barbuda)</option>
+      <option value="AR">AR (Argentina)</option>
+    </select>
     <span id="countryGlobalMsg" style="margin-left:8px;display:none;"></span>
   </div>
+  <div id="countryWebsiteMsg" style="display:none;color:#DC2626;font-size:10px;margin-top:8px;margin-bottom:8px;">Please select a website first.</div>
 
   <!-- Result Row -->
-  <div class="form-row" id="countryResult" style="display:none;">
-    <label>Website<br /><span class="info website-display"></span></label>
-    <label>Country<br /><span class="info" id="countryResultCode"></span></label>
-    <label>Now Root Domain<br /><span class="info" id="countryNowDomain"></span></label>
-    <label>
-      To Root Domain<br />
-      <select id="countryToRoot">
-        <option>0-hello.com</option>
-        <option>1-hello.com</option>
-        <option>2-hello.com</option>
-        <option>3-hello.com</option>
-      </select>
-    </label>
-    <button class="btn-primary" id="countryUpdateBtn">Update</button>
-    <button id="countryDeleteBtn">Delete</button>
+  <div id="countryResult" style="display:none;overflow-x:auto;">
+    <table style="width:100%;border-collapse:separate;border-spacing:0 4px;background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+      <thead style="background:#f6fbfd;">
+        <tr style="border-radius:12px;">
+          <th style="padding:10px 12px;font-weight:600;color:#222;text-align:left;">Country</th>
+          <th style="padding:10px 12px;font-weight:600;color:#222;text-align:left;">Now Root Domain</th>
+          <th style="padding:10px 12px;font-weight:600;color:#222;text-align:left;">To Root Domain</th>
+          <th style="padding:10px 12px;font-weight:600;color:#222;text-align:left;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#f9fafb;">
+          <td style="padding:10px 12px;color:#6b7280;" id="countryResultCode"></td>
+          <td style="padding:10px 12px;color:#6b7280;" id="countryNowDomain"></td>
+          <td style="padding:10px 12px;">
+            <select id="countryToRoot" style="padding:6px 10px;font-size:14px;border:1px solid #ccc;border-radius:4px;">
+              <option>0-hello.com</option>
+              <option>1-hello.com</option>
+              <option>2-hello.com</option>
+              <option>3-hello.com</option>
+            </select>
+          </td>
+          <td style="padding:10px 12px;">
+            <button class="btn-primary" id="countryUpdateBtn" style="margin-right:8px;">Update</button>
+            <button id="countryDeleteBtn">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -154,29 +182,50 @@
 <div class="card">
   <h2>Agent Domain Setting</h2>
   <!-- Search Row -->
-  <div class="form-row">
-    <label>Website<br /><span class="info website-display"></span></label>
-    <label>Agent ID<br /><input type="text" id="agentIdInput" placeholder="Enter Agent ID" /></label>
-    <button class="btn-primary" id="agentSearchBtn">Search</button>
+  <div class="form-row" style="width:100%;max-width:480px;">
+    <div style="position:relative;min-width:180px;max-width:180px;width:180px;">
+      <input type="text" id="agentIdInput" placeholder="Enter Agent ID" style="padding:8px 44px 8px 10px;font-size:14px;border:1px solid #ccc;border-radius:4px;width:180px;background:#f8fbfd;outline:none;box-sizing:border-box;" />
+      <button id="agentSearchBtn" style="position:absolute;top:50%;right:10px;transform:translateY(-50%);background:transparent;border:none;cursor:pointer;padding:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="9" cy="9" r="7" stroke="#94a3b8" stroke-width="2"/>
+          <line x1="14.2929" y1="14.7071" x2="18" y2="18.4142" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
     <span id="agentGlobalMsg" style="margin-left:8px;display:none;"></span>
   </div>
+  <div id="agentWebsiteMsg" style="display:none;color:#DC2626;font-size:10px;margin-top:8px;margin-bottom:8px;">Please select a website first.</div>
 
-  <!-- Result Row -->
-  <div class="form-row" id="agentResult" style="display:none;">
-    <label>Website<br /><span class="info website-display"></span></label>
-    <label>Agent<br /><span class="info" id="agentResultId"></span></label>
-    <label>Now Root Domain<br /><span class="info" id="agentNowDomain">oooo.net-CloudFront</span></label>
-    <label>
-      To Root Domain<br />
-      <select id="agentToRoot">
-        <option>0-hello.com</option>
-        <option>1-hello.com</option>
-        <option>2-hello.com</option>
-        <option>3-hello.com</option>
-      </select>
-    </label>
-    <button class="btn-primary" id="agentUpdateBtn">Update</button>
-    <button id="agentDeleteBtn">Delete</button>
+  <!-- Result Table -->
+  <div id="agentResult" style="display:none;overflow-x:auto;">
+    <table style="width:100%;border-collapse:separate;border-spacing:0 4px;background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+      <thead style="background:#f6fbfd;">
+        <tr style="border-radius:12px;">
+          <th style="padding:10px 12px;font-weight:600;color:#222;text-align:left;">Agent ID</th>
+          <th style="padding:10px 12px;font-weight:600;color:#222;text-align:left;">Now Root Domain</th>
+          <th style="padding:10px 12px;font-weight:600;color:#222;text-align:left;">To Root Domain</th>
+          <th style="padding:10px 12px;font-weight:600;color:#222;text-align:left;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#f9fafb;">
+          <td style="padding:10px 12px;color:#6b7280;" id="agentResultId"></td>
+          <td style="padding:10px 12px;color:#6b7280;" id="agentNowDomain">oooo.net-CloudFront</td>
+          <td style="padding:10px 12px;">
+            <select id="agentToRoot" style="padding:6px 10px;font-size:14px;border:1px solid #ccc;border-radius:4px;">
+              <option>0-hello.com</option>
+              <option>1-hello.com</option>
+              <option>2-hello.com</option>
+              <option>3-hello.com</option>
+            </select>
+          </td>
+          <td style="padding:10px 12px;">
+            <button class="btn-primary" id="agentUpdateBtn" style="margin-right:8px;">Update</button>
+            <button id="agentDeleteBtn">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -184,30 +233,52 @@
 <div class="card">
   <h2>User Domain Setting</h2>
   <!-- Search Row -->
-  <div class="form-row">
-    <label>Website<br /><span class="info website-display"></span></label>
-    <label>User ID<br /><input type="text" id="userIdInput" placeholder="Enter User ID" /></label>
-    <button class="btn-primary" id="userSearchBtn">Search</button>
+  <div class="form-row" style="width:100%;max-width:480px;">
+    <div style="position:relative;min-width:180px;max-width:180px;width:180px;">
+      <input type="text" id="userIdInput" placeholder="Enter User ID" style="padding:8px 44px 8px 10px;font-size:14px;border:1px solid #ccc;border-radius:4px;width:180px;background:#f8fbfd;outline:none;box-sizing:border-box;" />
+      <button id="userSearchBtn" style="position:absolute;top:50%;right:10px;transform:translateY(-50%);background:transparent;border:none;cursor:pointer;padding:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="9" cy="9" r="7" stroke="#94a3b8" stroke-width="2"/>
+          <line x1="14.2929" y1="14.7071" x2="18" y2="18.4142" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
     <span id="userGlobalMsg" style="margin-left:8px;display:none;"></span>
   </div>
+  <div id="userWebsiteMsg" style="display:none;color:#DC2626;font-size:10px;margin-top:8px;margin-bottom:8px;">Please select a website first.</div>
 
-  <!-- Result Row -->
-  <div class="form-row" id="userResult" style="display:none;">
-    <label>Website<br /><span class="info website-display"></span></label>
-    <label>User ID<br /><span class="info" id="userResultId"></span></label>
-    <label>FromRootDomain<br /><span class="info" id="userFromRoot"></span></label>
-    <label>DomainURL (DomainCache)<br /><span class="info">example.domain.cache</span></label>
-    <label>
-      To Root Domain<br />
-      <select id="userToRoot">
-        <option>0-hello.com</option>
-        <option>1-hello.com</option>
-        <option>2-hello.com</option>
-        <option>3-hello.com</option>
-      </select>
-    </label>
-    <button class="btn-primary" id="userUpdateBtn">Update</button>
-    <button id="userDeleteBtn">Delete</button>
+  <!-- Result Table -->
+  <div id="userResult" style="display:none;overflow-x:auto;">
+    <table style="width:100%;border-collapse:separate;border-spacing:0 4px;background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+      <thead style="background:#f6fbfd;">
+        <tr style="border-radius:12px;">
+          <th style="padding:10px 12px;font-weight:600;color:#222;text-align:left;">User ID</th>
+          <th style="padding:10px 12px;font-weight:600;color:#222;text-align:left;">Now Root Domain</th>
+          <th style="padding:10px 12px;font-weight:600;color:#222;text-align:left;">DomainURL (DomainCache)</th>
+          <th style="padding:10px 12px;font-weight:600;color:#222;text-align:left;">To Root Domain</th>
+          <th style="padding:10px 12px;font-weight:600;color:#222;text-align:left;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#f9fafb;">
+          <td style="padding:10px 12px;color:#6b7280;" id="userResultId"></td>
+          <td style="padding:10px 12px;color:#6b7280;" id="userFromRoot"></td>
+          <td style="padding:10px 12px;color:#6b7280;">example.domain.cache</td>
+          <td style="padding:10px 12px;">
+            <select id="userToRoot" style="padding:6px 10px;font-size:14px;border:1px solid #ccc;border-radius:4px;">
+              <option>0-hello.com</option>
+              <option>1-hello.com</option>
+              <option>2-hello.com</option>
+              <option>3-hello.com</option>
+            </select>
+          </td>
+          <td style="padding:10px 12px;">
+            <button class="btn-primary" id="userUpdateBtn" style="margin-right:8px;">Update</button>
+            <button id="userDeleteBtn">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -215,6 +286,7 @@
   const websiteSelect = document.getElementById('globalWebsite');
   const websiteDisplays = document.querySelectorAll('.website-display');
   const fromRoot = document.getElementById('fromRoot');
+  const selectedWebsiteTitle = document.getElementById('selectedWebsiteTitle');
 
   // 隨機 root domain pool
   const randomRootPool = [
@@ -230,40 +302,52 @@
 
   function syncWebsite() {
     const value = websiteSelect.value;
-    websiteDisplays.forEach(el => el.textContent = value);
+    // ...existing code...
+    const websiteDomainBlock = document.getElementById('websiteDomainBlock');
+    if (websiteDomainBlock) {
+      websiteDomainBlock.style.display = value ? 'block' : 'none';
+    }
+    // country block
+    const countrySelect = document.getElementById('countrySelect');
+    const countryWebsiteMsg = document.getElementById('countryWebsiteMsg');
+    if (countrySelect && countryWebsiteMsg) {
+      countrySelect.style.opacity = value ? '1' : '0.5';
+      countryWebsiteMsg.style.display = 'none';
+    }
+    // agent block
+    const agentIdInput = document.getElementById('agentIdInput');
+    const agentToRoot = document.getElementById('agentToRoot');
+    const agentWebsiteMsg = document.getElementById('agentWebsiteMsg');
+    if (agentIdInput && agentToRoot && agentWebsiteMsg) {
+      agentIdInput.style.opacity = value ? '1' : '0.5';
+      agentToRoot.style.opacity = value ? '1' : '0.5';
+      agentWebsiteMsg.style.display = 'none';
+    }
+    // user block
+    const userIdInput = document.getElementById('userIdInput');
+    const userToRoot = document.getElementById('userToRoot');
+    const userWebsiteMsg = document.getElementById('userWebsiteMsg');
+    if (userIdInput && userToRoot && userWebsiteMsg) {
+      userIdInput.style.opacity = value ? '1' : '0.5';
+      userToRoot.style.opacity = value ? '1' : '0.5';
+      userWebsiteMsg.style.display = 'none';
+    }
     fromRoot.textContent = getRandomRoot();
     // reset website-level message when switching website
     const siteGlobalMsg = document.getElementById('siteGlobalMsg');
     if (siteGlobalMsg) siteGlobalMsg.style.display = 'none';
-  }
-
-  // Global Search 功能
-  const globalSearchBtn = document.getElementById('globalSearchBtn');
-  
-  function handleGlobalSearch() {
-    const selectedSite = websiteSelect.value;
-    if (!selectedSite) {
-      alert('Please select a website first!');
-      return;
+    // 更新紅框內容
+    if (selectedWebsiteTitle) {
+      if (value) {
+        selectedWebsiteTitle.textContent = value;
+        selectedWebsiteTitle.style.display = 'inline-block';
+      } else {
+        selectedWebsiteTitle.style.display = 'none';
+      }
     }
-    
-    // 同步所有 website 顯示
-    websiteDisplays.forEach(el => {
-      if (el) el.textContent = selectedSite;
-    });
-    if (fromRoot) fromRoot.textContent = getRandomRoot();
-    
-    // 清除訊息
-    const siteGlobalMsg = document.getElementById('siteGlobalMsg');
-    if (siteGlobalMsg) siteGlobalMsg.style.display = 'none';
-    
-    console.log('Global search executed for:', selectedSite);
-  }
-  
-  if (globalSearchBtn) {
-    globalSearchBtn.addEventListener('click', handleGlobalSearch);
   }
 
+  // Global Website 選擇即時觸發
   websiteSelect.addEventListener('change', syncWebsite);
   syncWebsite();
 
@@ -292,6 +376,14 @@
   const agentToRoot = document.getElementById('agentToRoot');
 
   agentSearchBtn.addEventListener('click', () => {
+    if (!websiteSelect.value) {
+      const agentWebsiteMsgEl = document.getElementById('agentWebsiteMsg');
+      if (agentWebsiteMsgEl) {
+        agentWebsiteMsgEl.style.display = 'block';
+        setTimeout(() => agentWebsiteMsgEl.style.display = 'none', 3000);
+      }
+      return;
+    }
     if (!agentIdInput.value) return;
     agentResultId.textContent = agentIdInput.value;
     agentNowDomain.textContent = getRandomRoot();
@@ -329,6 +421,14 @@
   const userGlobalMsg = document.getElementById('userGlobalMsg');
 
   userSearchBtn.addEventListener('click', () => {
+    if (!websiteSelect.value) {
+      const userWebsiteMsgEl = document.getElementById('userWebsiteMsg');
+      if (userWebsiteMsgEl) {
+        userWebsiteMsgEl.style.display = 'block';
+        setTimeout(() => userWebsiteMsgEl.style.display = 'none', 3000);
+      }
+      return;
+    }
     if (!userIdInput.value) return;
     userResultId.textContent = userIdInput.value;
     userFromRoot.textContent = getRandomRoot();
@@ -352,8 +452,8 @@
   });
   
   // ===== Country Domain Setting =====
+
   const countrySelect = document.getElementById('countrySelect');
-  const countrySearchBtn = document.getElementById('countrySearchBtn');
   const countryResult = document.getElementById('countryResult');
   const countryResultCode = document.getElementById('countryResultCode');
   const countryNowDomain = document.getElementById('countryNowDomain');
@@ -362,7 +462,16 @@
   const countryDeleteBtn = document.getElementById('countryDeleteBtn');
   const countryGlobalMsg = document.getElementById('countryGlobalMsg');
 
-  countrySearchBtn.addEventListener('click', () => {
+  countrySelect.addEventListener('change', () => {
+    if (!websiteSelect.value) {
+      const countryWebsiteMsgEl = document.getElementById('countryWebsiteMsg');
+      if (countryWebsiteMsgEl) {
+        countryWebsiteMsgEl.style.display = 'block';
+        setTimeout(() => countryWebsiteMsgEl.style.display = 'none', 3000);
+      }
+      countrySelect.value = '';
+      return;
+    }
     if (!countrySelect.value) return;
     countryResultCode.textContent = countrySelect.options[countrySelect.selectedIndex].text;
     countryNowDomain.textContent = getRandomRoot();
@@ -384,6 +493,32 @@
     countryGlobalMsg.style.color = 'red';
     countryGlobalMsg.style.display = 'inline';
   });
+
+  // Add input focus listeners to show warning
+  const agentIdInputEl = document.getElementById('agentIdInput');
+  const userIdInputEl = document.getElementById('userIdInput');
+  const agentWebsiteMsgEl = document.getElementById('agentWebsiteMsg');
+  const userWebsiteMsgEl = document.getElementById('userWebsiteMsg');
+
+  if (agentIdInputEl && agentWebsiteMsgEl) {
+    agentIdInputEl.addEventListener('focus', () => {
+      if (!websiteSelect.value) {
+        agentWebsiteMsgEl.style.display = 'block';
+        setTimeout(() => agentWebsiteMsgEl.style.display = 'none', 3000);
+        agentIdInputEl.blur();
+      }
+    });
+  }
+
+  if (userIdInputEl && userWebsiteMsgEl) {
+    userIdInputEl.addEventListener('focus', () => {
+      if (!websiteSelect.value) {
+        userWebsiteMsgEl.style.display = 'block';
+        setTimeout(() => userWebsiteMsgEl.style.display = 'none', 3000);
+        userIdInputEl.blur();
+      }
+    });
+  }
 </script>
 
 </body>
