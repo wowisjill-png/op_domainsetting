@@ -169,8 +169,9 @@
             </select>
           </td>
           <td style="padding:10px 12px;">
-            <button class="btn-primary" id="countryUpdateBtn" style="margin-right:8px;">Update</button>
-            <button id="countryDeleteBtn">Delete</button>
+            <button class="btn-primary" id="countryAddBtn" style="margin-right:8px;display:none;">Add</button>
+            <button class="btn-primary" id="countryUpdateBtn" style="margin-right:8px;display:none;">Update</button>
+            <button id="countryDeleteBtn" style="display:none;">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -210,7 +211,7 @@
       <tbody>
         <tr style="background:#f9fafb;">
           <td style="padding:10px 12px;color:#6b7280;" id="agentResultId"></td>
-          <td style="padding:10px 12px;color:#6b7280;" id="agentNowDomain">oooo.net-CloudFront</td>
+          <td style="padding:10px 12px;color:#6b7280;" id="agentNowDomain"></td>
           <td style="padding:10px 12px;">
             <select id="agentToRoot" style="padding:6px 10px;font-size:14px;border:1px solid #ccc;border-radius:4px;">
               <option>0-hello.com</option>
@@ -220,8 +221,9 @@
             </select>
           </td>
           <td style="padding:10px 12px;">
-            <button class="btn-primary" id="agentUpdateBtn" style="margin-right:8px;">Update</button>
-            <button id="agentDeleteBtn">Delete</button>
+            <button class="btn-primary" id="agentAddBtn" style="margin-right:8px;display:none;">Add</button>
+            <button class="btn-primary" id="agentUpdateBtn" style="margin-right:8px;display:none;">Update</button>
+            <button id="agentDeleteBtn" style="display:none;">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -263,7 +265,7 @@
         <tr style="background:#f9fafb;">
           <td style="padding:10px 12px;color:#6b7280;" id="userResultId"></td>
           <td style="padding:10px 12px;color:#6b7280;" id="userFromRoot"></td>
-          <td style="padding:10px 12px;color:#6b7280;">example.domain.cache</td>
+          <td style="padding:10px 12px;color:#6b7280;" id="userDomainCache"></td>
           <td style="padding:10px 12px;">
             <select id="userToRoot" style="padding:6px 10px;font-size:14px;border:1px solid #ccc;border-radius:4px;">
               <option>0-hello.com</option>
@@ -273,8 +275,9 @@
             </select>
           </td>
           <td style="padding:10px 12px;">
-            <button class="btn-primary" id="userUpdateBtn" style="margin-right:8px;">Update</button>
-            <button id="userDeleteBtn">Delete</button>
+            <button class="btn-primary" id="userAddBtn" style="margin-right:8px;display:none;">Add</button>
+            <button class="btn-primary" id="userUpdateBtn" style="margin-right:8px;display:none;">Update</button>
+            <button id="userDeleteBtn" style="display:none;">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -368,6 +371,7 @@
   const agentResult = document.getElementById('agentResult');
   const agentResultId = document.getElementById('agentResultId');
   const agentIdInput = document.getElementById('agentIdInput');
+  const agentAddBtn = document.getElementById('agentAddBtn');
   const agentUpdateBtn = document.getElementById('agentUpdateBtn');
   const agentDeleteBtn = document.getElementById('agentDeleteBtn');
   // agentMsg was undefined, use agentGlobalMsg instead
@@ -384,11 +388,40 @@
       }
       return;
     }
-    if (!agentIdInput.value) return;
+    
+    // Check if Agent ID is filled
+    if (!agentIdInput.value.trim()) {
+      agentGlobalMsg.textContent = 'Fill in the required fields first.';
+      agentGlobalMsg.style.color = '#DC2626';
+      agentGlobalMsg.style.display = 'inline';
+      setTimeout(() => agentGlobalMsg.style.display = 'none', 3000);
+      return;
+    }
+    
     agentResultId.textContent = agentIdInput.value;
-    agentNowDomain.textContent = getRandomRoot();
+    
+    // Simulate search - show NoData message
+    agentNowDomain.textContent = '';
+    agentAddBtn.style.display = 'inline-block';
+    agentUpdateBtn.style.display = 'none';
+    agentDeleteBtn.style.display = 'none';
+    
     agentResult.style.display = 'flex';
-    agentGlobalMsg.style.display = 'none';
+    agentGlobalMsg.textContent = 'NoData';
+    agentGlobalMsg.style.color = '#6b7280';
+    agentGlobalMsg.style.display = 'inline';
+    setTimeout(() => agentGlobalMsg.style.display = 'none', 3000);
+  });
+
+  // Add action
+  agentAddBtn.addEventListener('click', () => {
+    agentNowDomain.textContent = agentToRoot.value;
+    agentAddBtn.style.display = 'none';
+    agentUpdateBtn.style.display = 'inline-block';
+    agentDeleteBtn.style.display = 'inline-block';
+    agentGlobalMsg.textContent = 'Add successful';
+    agentGlobalMsg.style.color = 'green';
+    agentGlobalMsg.style.display = 'inline';
   });
 
   // Update action
@@ -400,10 +433,11 @@
   });
 
   // Delete action
-
   agentDeleteBtn.addEventListener('click', () => {
-    agentResult.style.display = 'none';
-    agentIdInput.value = '';
+    agentNowDomain.textContent = '';
+    agentAddBtn.style.display = 'inline-block';
+    agentUpdateBtn.style.display = 'none';
+    agentDeleteBtn.style.display = 'none';
     agentGlobalMsg.textContent = 'Delete successful';
     agentGlobalMsg.style.color = 'red';
     agentGlobalMsg.style.display = 'inline';
@@ -415,7 +449,9 @@
   const userIdInput = document.getElementById('userIdInput');
   const userResultId = document.getElementById('userResultId');
   const userFromRoot = document.getElementById('userFromRoot');
+  const userDomainCache = document.getElementById('userDomainCache');
   const userToRoot = document.getElementById('userToRoot');
+  const userAddBtn = document.getElementById('userAddBtn');
   const userUpdateBtn = document.getElementById('userUpdateBtn');
   const userDeleteBtn = document.getElementById('userDeleteBtn');
   const userGlobalMsg = document.getElementById('userGlobalMsg');
@@ -429,11 +465,42 @@
       }
       return;
     }
-    if (!userIdInput.value) return;
+    
+    // Check if User ID is filled
+    if (!userIdInput.value.trim()) {
+      userGlobalMsg.textContent = 'Fill in the required fields first.';
+      userGlobalMsg.style.color = '#DC2626';
+      userGlobalMsg.style.display = 'inline';
+      setTimeout(() => userGlobalMsg.style.display = 'none', 3000);
+      return;
+    }
+    
     userResultId.textContent = userIdInput.value;
-    userFromRoot.textContent = getRandomRoot();
+    
+    // Simulate search - show NoData message
+    userFromRoot.textContent = '';
+    userDomainCache.textContent = '';
+    userAddBtn.style.display = 'inline-block';
+    userUpdateBtn.style.display = 'none';
+    userDeleteBtn.style.display = 'none';
+    
     userResult.style.display = 'flex';
-    userGlobalMsg.style.display = 'none';
+    userGlobalMsg.textContent = 'NoData';
+    userGlobalMsg.style.color = '#6b7280';
+    userGlobalMsg.style.display = 'inline';
+    setTimeout(() => userGlobalMsg.style.display = 'none', 3000);
+  });
+
+  // Add action
+  userAddBtn.addEventListener('click', () => {
+    userFromRoot.textContent = userToRoot.value;
+    userDomainCache.textContent = userIdInput.value + '.domain.cache';
+    userAddBtn.style.display = 'none';
+    userUpdateBtn.style.display = 'inline-block';
+    userDeleteBtn.style.display = 'inline-block';
+    userGlobalMsg.textContent = 'Add successful';
+    userGlobalMsg.style.color = 'green';
+    userGlobalMsg.style.display = 'inline';
   });
 
   userUpdateBtn.addEventListener('click', () => {
@@ -444,20 +511,23 @@
   });
 
   userDeleteBtn.addEventListener('click', () => {
-    userResult.style.display = 'none';
-    userIdInput.value = '';
+    userFromRoot.textContent = '';
+    userDomainCache.textContent = '';
+    userAddBtn.style.display = 'inline-block';
+    userUpdateBtn.style.display = 'none';
+    userDeleteBtn.style.display = 'none';
     userGlobalMsg.textContent = 'Delete successful';
     userGlobalMsg.style.color = 'red';
     userGlobalMsg.style.display = 'inline';
   });
   
   // ===== Country Domain Setting =====
-
   const countrySelect = document.getElementById('countrySelect');
   const countryResult = document.getElementById('countryResult');
   const countryResultCode = document.getElementById('countryResultCode');
   const countryNowDomain = document.getElementById('countryNowDomain');
   const countryToRoot = document.getElementById('countryToRoot');
+  const countryAddBtn = document.getElementById('countryAddBtn');
   const countryUpdateBtn = document.getElementById('countryUpdateBtn');
   const countryDeleteBtn = document.getElementById('countryDeleteBtn');
   const countryGlobalMsg = document.getElementById('countryGlobalMsg');
@@ -474,9 +544,26 @@
     }
     if (!countrySelect.value) return;
     countryResultCode.textContent = countrySelect.options[countrySelect.selectedIndex].text;
-    countryNowDomain.textContent = getRandomRoot();
+    
+    // Default to empty (no existing domain)
+    countryNowDomain.textContent = '';
+    countryAddBtn.style.display = 'inline-block';
+    countryUpdateBtn.style.display = 'none';
+    countryDeleteBtn.style.display = 'none';
+    
     countryResult.style.display = 'flex';
     countryGlobalMsg.style.display = 'none';
+  });
+
+  // Add action
+  countryAddBtn.addEventListener('click', () => {
+    countryNowDomain.textContent = countryToRoot.value;
+    countryAddBtn.style.display = 'none';
+    countryUpdateBtn.style.display = 'inline-block';
+    countryDeleteBtn.style.display = 'inline-block';
+    countryGlobalMsg.textContent = 'Add successful';
+    countryGlobalMsg.style.color = 'green';
+    countryGlobalMsg.style.display = 'inline';
   });
 
   countryUpdateBtn.addEventListener('click', () => {
@@ -487,8 +574,10 @@
   });
 
   countryDeleteBtn.addEventListener('click', () => {
-    countryResult.style.display = 'none';
-    countrySelect.value = '';
+    countryNowDomain.textContent = '';
+    countryAddBtn.style.display = 'inline-block';
+    countryUpdateBtn.style.display = 'none';
+    countryDeleteBtn.style.display = 'none';
     countryGlobalMsg.textContent = 'Delete successful';
     countryGlobalMsg.style.color = 'red';
     countryGlobalMsg.style.display = 'inline';
