@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website › Domain Setting</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --text: #11151d; --text-muted: #6b7280; --text-light: #9ca3af;
+    --border: #e5e7eb; --border-hover: #d1d5db; --surface: #f9fafb;
+    --primary: #1e8db8; --primary-light: #e8f4f9; --primary-hover: #1a7da6;
+    --danger: #ef4444; --danger-light: #fef2f2;
+    --success: #10b981; --warning: #f59e0b;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    --radius: 6px; --radius-lg: 10px;
+  }
+  body { font-family:'DM Sans',sans-serif; background:#f0f2f5; color:var(--text); font-size:14px; min-height:100vh; }
+  .page-wrapper { max-width:1100px; margin:0 auto; padding:24px 24px 60px; }
+
+  .breadcrumb { font-size:20px; font-weight:600; color:var(--text); margin-bottom:20px; letter-spacing:-0.01em; }
+  .breadcrumb span { color:var(--text-muted); font-weight:400; }
+
+  /* Website selector bar */
+  .website-selector-bar {
+    background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-lg);
+    box-shadow:var(--shadow); padding:18px 24px; margin-bottom:20px;
+    display:flex; align-items:flex-end; gap:16px; flex-wrap:wrap;
+  }
+  .ws-label { font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; }
+  .ws-select {
+    padding:8px 32px 8px 12px; font-size:14px; font-family:'DM Sans',sans-serif;
+    border:1px solid var(--border); border-radius:var(--radius); background:var(--bg);
+    color:var(--text); cursor:pointer; min-width:220px; appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 10px center;
+    transition:border-color 0.15s, box-shadow 0.15s;
+  }
+  .ws-select:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(30,141,184,0.08); }
+  .ws-select:hover { border-color:var(--border-hover); }
+
+  .active-pill {
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--primary-light); border:1px solid #bde0f0; border-radius:20px;
+    padding:5px 14px; font-size:13px; font-weight:600; color:var(--primary); white-space:nowrap;
+  }
+  .active-pill .dot { width:7px; height:7px; background:var(--primary); border-radius:50%; }
+
+  /* Cards */
+  .card { background:var(--bg); border-radius:var(--radius-lg); box-shadow:var(--shadow); border:1px solid var(--border); overflow:hidden; margin-bottom:16px; transition:opacity 0.2s; }
+  .card.disabled { opacity:0.45; pointer-events:none; }
+  .card-header { padding:14px 22px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--surface); }
+  .card-title { font-size:13px; font-weight:600; color:var(--text); }
+  .card-body { padding:20px 22px; }
+
+  /* Field */
+  .field-label { font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
+  .field-value { font-size:14px; font-weight:600; color:var(--text); font-family:'DM Mono',monospace; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:7px 12px; min-width:200px; display:inline-block; }
+
+  /* Selects */
+  select.field-select {
+    padding:7px 32px 7px 12px; font-size:13.5px; font-family:'DM Sans',sans-serif;
+    border:1px solid var(--border); border-radius:var(--radius); background:var(--bg);
+    color:var(--text); cursor:pointer; min-width:200px; appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 10px center;
+    transition:border-color 0.15s, box-shadow 0.15s;
+  }
+  select.field-select:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(30,141,184,0.08); }
+  select.field-select:hover { border-color:var(--border-hover); }
+
+  /* Search field (input+btn or select+btn) */
+  .search-field {
+    display:flex; align-items:center; border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg); overflow:hidden; transition:border-color 0.15s, box-shadow 0.15s; min-width:220px;
+  }
+  .search-field:focus-within { border-color:var(--primary); box-shadow:0 0 0 3px rgba(30,141,184,0.08); }
+  .search-field input {
+    flex:1; padding:7px 12px; font-size:13.5px; font-family:'DM Sans',sans-serif;
+    border:none; background:transparent; color:var(--text); min-width:0;
+  }
+  .search-field input:focus { outline:none; }
+  .search-field input::placeholder { color:var(--text-light); }
+  .search-field select {
+    flex:1; padding:7px 8px; font-size:13.5px; font-family:'DM Sans',sans-serif;
+    border:none; background:transparent; color:var(--text); min-width:0; cursor:pointer; appearance:none; outline:none;
+  }
+  .sf-divider { width:1px; height:20px; background:var(--border); flex-shrink:0; }
+  .sf-btn {
+    display:flex; align-items:center; justify-content:center;
+    width:36px; height:34px; background:transparent; border:none;
+    cursor:pointer; color:var(--text-muted); flex-shrink:0; transition:color 0.15s, background 0.15s;
+  }
+  .sf-btn:hover { color:var(--primary); background:var(--primary-light); }
+
+  .inline-row { display:flex; align-items:flex-end; gap:16px; flex-wrap:wrap; }
+  .inline-group { display:flex; flex-direction:column; }
+
+  /* Buttons */
+  .btn {
+    padding:7px 18px; border-radius:var(--radius); font-family:'DM Sans',sans-serif;
+    font-size:13px; font-weight:500; cursor:pointer; transition:all 0.15s;
+    border:1px solid transparent; display:inline-flex; align-items:center; gap:6px;
+  }
+  .btn-primary   { background:var(--primary);  color:white; border-color:var(--primary); }
+  .btn-primary:hover { background:var(--primary-hover); border-color:var(--primary-hover); }
+  .btn-outline   { background:transparent; color:var(--text-muted); border-color:var(--border); }
+  .btn-outline:hover { border-color:var(--border-hover); color:var(--text); background:var(--surface); }
+  .btn-danger-soft { background:var(--danger-light); color:var(--danger); border-color:#fca5a5; }
+  .btn-danger-soft:hover { background:#fde8e8; }
+  .btn-warn-soft { background:#fef3c7; color:#92400e; border-color:#fde68a; }
+  .btn-warn-soft:hover { background:#fde9a0; }
+  .btn-sm  { padding:5px 13px; font-size:12.5px; }
+  .btn-xs  { padding:4px 10px; font-size:12px; }
+
+  /* Results table */
+  .results-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .results-table th {
+    background:var(--surface); padding:9px 14px; text-align:left; font-weight:600;
+    font-size:11.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted);
+    border-bottom:2px solid var(--border); white-space:nowrap;
+  }
+  .results-table td { padding:11px 14px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .results-table tr:last-child td { border-bottom:none; }
+  .results-table tr:hover td { background:#fafbfc; }
+  .results-table tr.add-row td { background:#f0f9ff; }
+  .results-table tr.add-row:hover td { background:#e4f2fb; }
+  @keyframes rowFlash { from{background:#d0f0e0} to{background:transparent} }
+  .results-table tr.just-added td { animation:rowFlash 1.2s ease forwards; }
+
+  .action-cell { display:flex; gap:6px; white-space:nowrap; }
+  .mono { font-family:'DM Mono',monospace; font-size:12.5px; }
+  .text-light { color:var(--text-light); font-style:italic; }
+
+  .cache-link { font-family:'DM Mono',monospace; font-size:12px; color:var(--primary); text-decoration:none; word-break:break-all; }
+  .cache-link:hover { text-decoration:underline; }
+
+  /* Toast */
+  .toast-container { position:fixed; bottom:28px; right:28px; display:flex; flex-direction:column; gap:8px; z-index:9999; }
+  .toast {
+    background:var(--text); color:white; padding:11px 18px; border-radius:var(--radius);
+    font-size:13px; font-weight:500; box-shadow:var(--shadow-md);
+    animation:toastIn 0.2s ease; display:flex; align-items:center; gap:10px; min-width:220px;
+  }
+  .toast .t-icon { width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:11px; font-weight:700; }
+  .toast.success { background:var(--success); }
+  .toast.success .t-icon { background:rgba(255,255,255,0.25); }
+  .toast.error   { background:var(--danger); }
+  .toast.error .t-icon   { background:rgba(255,255,255,0.25); }
+  .toast.deleted { background:#6b7280; }
+  .toast.deleted .t-icon { background:rgba(255,255,255,0.2); }
+  .toast.warn    { background:var(--danger); }
+  .toast.warn .t-icon    { background:rgba(255,255,255,0.25); }
+  @keyframes toastIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  .search-icon { width:15px; height:15px; display:block; }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <div class="breadcrumb">Website <span>›</span> Domain Setting</div>
+
+  <!-- Global Website Selector -->
+  <div class="website-selector-bar">
+    <div class="inline-group">
+      <div class="ws-label">Website</div>
+      <select class="ws-select" id="globalWebsite" onchange="onWebsiteChange()">
+        <option value="">— Select Website —</option>
+        <option value="Home">Home</option>
+        <option value="Au01">Au01</option>
+        <option value="Au02">Au02</option>
+        <option value="Au03">Au03</option>
+        <option value="JP01">JP01</option>
+        <option value="JP02">JP02</option>
+        <option value="JP03">JP03</option>
+      </select>
+    </div>
+    <div id="activePill" style="display:none">
+      <div class="active-pill"><span class="dot"></span><span id="activePillText"></span></div>
+    </div>
+  </div>
+
+  <!-- Website Domain Setting -->
+  <div class="card" id="cardWebsite">
+    <div class="card-header"><div class="card-title">Website Domain Setting</div></div>
+    <div class="card-body">
+      <div class="inline-row">
+        <div class="inline-group">
+          <div class="field-label">Current Root Domain</div>
+          <div class="field-value" id="fromRoot"><span class="text-light" style="font-family:inherit;font-weight:400">—</span></div>
+        </div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="2" style="margin-bottom:8px;flex-shrink:0"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        <div class="inline-group">
+          <div class="field-label">To Root Domain</div>
+          <select class="field-select" id="siteToRoot"></select>
+        </div>
+        <div style="margin-bottom:1px">
+          <button class="btn btn-primary btn-sm" onclick="doSiteUpdate()">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Country Domain Setting -->
+  <div class="card" id="cardCountry">
+    <div class="card-header"><div class="card-title">Country Domain Setting</div></div>
+    <div class="card-body">
+      <div class="inline-row" style="margin-bottom:16px">
+        <div class="inline-group">
+          <div class="field-label">Country</div>
+          <div class="search-field" style="min-width:280px">
+            <select id="countrySelectEl">
+              <option value="">Select country...</option>
+              <option value="AS">AS — American Samoa</option>
+              <option value="AD">AD — Andorra</option>
+              <option value="AO">AO — Angola</option>
+              <option value="AI">AI — Anguilla</option>
+              <option value="AQ">AQ — Antarctica</option>
+              <option value="AG">AG — Antigua and Barbuda</option>
+              <option value="AR">AR — Argentina</option>
+              <option value="AM">AM — Armenia</option>
+              <option value="AU">AU — Australia</option>
+              <option value="AT">AT — Austria</option>
+              <option value="JP">JP — Japan</option>
+              <option value="KR">KR — Korea</option>
+              <option value="TW">TW — Taiwan</option>
+            </select>
+            <span class="sf-divider"></span>
+            <button class="sf-btn" onclick="doCountrySearch()" title="Search">
+              <svg class="search-icon" viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.8"/><line x1="13" y1="13" x2="17" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="countryResult" style="display:none;overflow-x:auto">
+        <table class="results-table">
+          <thead><tr><th>Country</th><th>Current Root Domain</th><th>To Root Domain</th><th>Action</th></tr></thead>
+          <tbody id="countryTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent Domain Setting -->
+  <div class="card" id="cardAgent">
+    <div class="card-header"><div class="card-title">Agent Domain Setting</div></div>
+    <div class="card-body">
+      <div class="inline-row" style="margin-bottom:16px">
+        <div class="inline-group">
+          <div class="field-label">AGENT</div>
+          <div class="search-field">
+            <input type="text" id="agentIdInput" placeholder="Enter Agent" onkeydown="if(event.key==='Enter')doAgentSearch()" />
+            <span class="sf-divider"></span>
+            <button class="sf-btn" onclick="doAgentSearch()" title="Search">
+              <svg class="search-icon" viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.8"/><line x1="13" y1="13" x2="17" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="agentResult" style="display:none;overflow-x:auto">
+        <table class="results-table">
+          <thead><tr><th>Agent ID</th><th>Current Root Domain</th><th>To Root Domain</th><th>Action</th></tr></thead>
+          <tbody id="agentTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Domain Setting -->
+  <div class="card" id="cardUser">
+    <div class="card-header"><div class="card-title">User Domain Setting</div></div>
+    <div class="card-body">
+      <div class="inline-row" style="margin-bottom:16px">
+        <div class="inline-group">
+          <div class="field-label">User ID</div>
+          <div class="search-field">
+            <input type="text" id="userIdInput" placeholder="Enter User ID" onkeydown="if(event.key==='Enter')doUserSearch()" />
+            <span class="sf-divider"></span>
+            <button class="sf-btn" onclick="doUserSearch()" title="Search">
+              <svg class="search-icon" viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.8"/><line x1="13" y1="13" x2="17" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="userResult" style="display:none;overflow-x:auto">
+        <table class="results-table">
+          <thead><tr><th>User ID</th><th>Current Root Domain</th><th>Domain Cache URL</th><th>To Root Domain</th><th>Action</th></tr></thead>
+          <tbody id="userTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ── Constants ──────────────────────────────────────────────────────────────────
+const DOMAIN_OPTS = ['0-hello.com','1-hello.com','2-hello.com','3-hello.com'];
+const ROOT_POOL   = ['oooo.net-CloudFront','kkkkk.net-CloudFront','xxxx.net-CloudFront','gggg.net-CloudFront'];
+
+const COUNTRY_DB = [
+  { code:'AU', label:'AU — Australia', domain:'1-hello.com' },
+  { code:'JP', label:'JP — Japan',     domain:'2-hello.com' },
+  { code:'TW', label:'TW — Taiwan',    domain:'0-hello.com' },
+  { code:'KR', label:'KR — Korea',     domain:'3-hello.com' },
+];
+const AGENT_DB = [
+  { agentId:'AG-001', domain:'1-hello.com' },
+  { agentId:'AG-002', domain:'2-hello.com' },
+  { agentId:'AG-003', domain:'0-hello.com' },
+];
+const USER_DB = {
+  '1': { domain:'1-hello.com' },
+  '2': { domain:'2-hello.com' },
+};
+
+function randRoot() { return ROOT_POOL[Math.floor(Math.random()*ROOT_POOL.length)]; }
+function cacheUrl(d) { return `https://${d}`; }
+
+// ── Toast (unified for ALL messages) ──────────────────────────────────────────
+// type: 'success' | 'error' | 'deleted' | 'warn'
+const TOAST_ICONS = {
+  success: '✓',
+  error:   '✕',
+  deleted: '✕',
+  warn:    '!'
+};
+function toast(msg, type='success') {
+  const c = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span class="t-icon">${TOAST_ICONS[type]||'i'}</span><span>${msg}</span>`;
+  c.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity='0'; el.style.transform='translateY(8px)'; el.style.transition='all 0.3s';
+    setTimeout(()=>el.remove(), 300);
+  }, 2800);
+}
+
+// ── Domain select — EXCLUDES currentDomain from options ─────────────────────
+// excludeDomain: the value to omit (e.g. current root domain of this row)
+function domainSelectHtml(id, selectedVal, excludeDomain) {
+  const opts = DOMAIN_OPTS.filter(d => d !== excludeDomain);
+  // If selectedVal was excluded, pick first available
+  const sel = opts.includes(selectedVal) ? selectedVal : opts[0];
+  return `<select class="field-select btn-sm" id="${id}" style="min-width:160px">
+    ${opts.map(d=>`<option${d===sel?' selected':''}>${d}</option>`).join('')}
+  </select>`;
+}
+
+// flash newly-added row
+function flashRow(tr) {
+  tr.classList.add('just-added');
+  setTimeout(()=>tr.classList.remove('just-added'), 1300);
+}
+
+// ── Global Website ─────────────────────────────────────────────────────────────
+let currentRootDomain = '';
+function getWebsite() { return document.getElementById('globalWebsite').value; }
+
+function onWebsiteChange() {
+  const v = getWebsite();
+  document.getElementById('activePill').style.display = v ? 'flex' : 'none';
+  document.getElementById('activePillText').textContent = v;
+  ['cardWebsite','cardCountry','cardAgent','cardUser'].forEach(id =>
+    document.getElementById(id).classList.toggle('disabled', !v));
+  if (v) {
+    currentRootDomain = randRoot();
+    document.getElementById('fromRoot').innerHTML = `<span class="mono">${currentRootDomain}</span>`;
+    refreshSiteToRootOptions();
+  } else {
+    currentRootDomain = '';
+    document.getElementById('fromRoot').innerHTML = `<span class="text-light" style="font-family:inherit;font-weight:400">—</span>`;
+    document.getElementById('siteToRoot').innerHTML = '';
+  }
+  ['countryResult','agentResult','userResult'].forEach(id =>
+    document.getElementById(id).style.display = 'none');
+  document.getElementById('countrySelectEl').value = '';
+  document.getElementById('agentIdInput').value = '';
+  document.getElementById('userIdInput').value = '';
+}
+
+// siteToRoot: exclude currentRootDomain
+function refreshSiteToRootOptions() {
+  const sel = document.getElementById('siteToRoot');
+  const prev = sel.value;
+  const opts = DOMAIN_OPTS.filter(d => d !== currentRootDomain);
+  sel.innerHTML = opts.map(d=>`<option${d===prev?' selected':''}>${d}</option>`).join('');
+}
+
+// ── Website Domain ─────────────────────────────────────────────────────────────
+function doSiteUpdate() {
+  if (!getWebsite()) { toast('Please select a Website first.','warn'); return; }
+  const v = document.getElementById('siteToRoot').value;
+  currentRootDomain = v;
+  document.getElementById('fromRoot').innerHTML = `<span class="mono">${v}</span>`;
+  refreshSiteToRootOptions();
+  toast('Root domain updated successfully.', 'success');
+}
+
+// ── Country Domain ─────────────────────────────────────────────────────────────
+let countryStore = COUNTRY_DB.map(r => ({...r}));
+
+function doCountrySearch() {
+  if (!getWebsite()) { toast('Please select a Website first.','warn'); return; }
+  const sel = document.getElementById('countrySelectEl');
+  const code = sel.value;
+  if (!code) { toast('Please select a country.','warn'); return; }
+  const label = sel.options[sel.selectedIndex].text;
+  renderCountryTable(code, label);
+}
+
+function renderCountryTable(searchCode, searchLabel) {
+  const tbody = document.getElementById('countryTbody');
+  tbody.innerHTML = '';
+
+  const matching = countryStore
+    .map((item,i) => ({item,i}))
+    .filter(({item}) => item.code === searchCode);
+
+  // Add row (always first)
+  const addTr = document.createElement('tr');
+  addTr.className = 'add-row';
+  addTr.id = 'ctry-add-row';
+  addTr.innerHTML = `
+    <td class="mono">${searchLabel}</td>
+    <td class="text-light">—</td>
+    <td>${domainSelectHtml('ctry-add-sel','0-hello.com', null)}</td>
+    <td><div class="action-cell">
+      <button class="btn btn-primary btn-xs" onclick="doCountryAdd('${searchCode}','${searchLabel.replace(/'/g,"\\'")}')">Add</button>
+    </div></td>`;
+  tbody.appendChild(addTr);
+
+  matching.forEach(({item,i}) => appendCountryRow(tbody, item, i));
+  document.getElementById('countryResult').style.display = 'block';
+}
+
+function appendCountryRow(tbody, item, idx) {
+  const tr = document.createElement('tr');
+  tr.id = `ctry-row-${idx}`;
+  tr.dataset.code = item.code;
+  tr.innerHTML = `
+    <td class="mono">${item.label}</td>
+    <td class="mono" id="ctry-now-${idx}">${item.domain}</td>
+    <td>${domainSelectHtml(`ctry-to-${idx}`, item.domain, item.domain)}</td>
+    <td><div class="action-cell">
+      <button class="btn btn-outline btn-xs" onclick="doCountryUpdate(${idx})">Update</button>
+      <button class="btn btn-danger-soft btn-xs" onclick="doCountryDelete(${idx})">Delete</button>
+    </div></td>`;
+  tbody.appendChild(tr);
+}
+
+function doCountryAdd(code, label) {
+  const sel = document.getElementById('ctry-add-sel').value;
+  const dup = countryStore.some(r => r.code === code && r.domain === sel);
+  if (dup) { toast('This root domain is already set for this country.','error'); return; }
+
+  const idx = countryStore.length;
+  countryStore.push({ code, label, domain: sel });
+
+  const tbody = document.getElementById('countryTbody');
+  const newTr = document.createElement('tr');
+  newTr.id = `ctry-row-${idx}`;
+  newTr.dataset.code = code;
+  newTr.innerHTML = `
+    <td class="mono">${label}</td>
+    <td class="mono" id="ctry-now-${idx}">${sel}</td>
+    <td>${domainSelectHtml(`ctry-to-${idx}`, sel, sel)}</td>
+    <td><div class="action-cell">
+      <button class="btn btn-outline btn-xs" onclick="doCountryUpdate(${idx})">Update</button>
+      <button class="btn btn-danger-soft btn-xs" onclick="doCountryDelete(${idx})">Delete</button>
+    </div></td>`;
+  document.getElementById('ctry-add-row').after(newTr);
+  flashRow(newTr);
+  toast('Country domain added successfully.', 'success');
+}
+
+function doCountryUpdate(idx) {
+  const sel = document.getElementById(`ctry-to-${idx}`).value;
+  const row = document.getElementById(`ctry-row-${idx}`);
+  const code = row ? row.dataset.code : '';
+  const dup = countryStore.some((r,i) => i !== idx && r.code === code && r.domain === sel);
+  if (dup) { toast('This root domain is already set for this country.','error'); return; }
+  document.getElementById(`ctry-now-${idx}`).textContent = sel;
+  // refresh the To select to exclude newly-set domain
+  const toSel = document.getElementById(`ctry-to-${idx}`);
+  if (toSel) toSel.outerHTML = domainSelectHtml(`ctry-to-${idx}`, sel, sel);
+  if (countryStore[idx]) countryStore[idx].domain = sel;
+  toast('Country domain updated successfully.', 'success');
+}
+
+function doCountryDelete(idx) {
+  const row = document.getElementById(`ctry-row-${idx}`);
+  if (row) row.remove();
+  countryStore.splice(idx, 1);
+  reindexRows('ctry', 'doCountryUpdate', 'doCountryDelete');
+  toast('Country domain deleted.', 'deleted');
+}
+
+// ── Agent Domain ───────────────────────────────────────────────────────────────
+let agentStore = AGENT_DB.map(r => ({...r}));
+
+function doAgentSearch() {
+  if (!getWebsite()) { toast('Please select a Website first.','warn'); return; }
+  const id = document.getElementById('agentIdInput').value.trim();
+  if (!id) { toast('Please enter an Agent ID.','warn'); return; }
+  renderAgentTable(id);
+}
+
+function renderAgentTable(searchId) {
+  const tbody = document.getElementById('agentTbody');
+  tbody.innerHTML = '';
+
+  const matching = agentStore
+    .map((item,i) => ({item,i}))
+    .filter(({item}) => item.agentId === searchId);
+
+  const addTr = document.createElement('tr');
+  addTr.className = 'add-row';
+  addTr.id = 'agent-add-row';
+  addTr.innerHTML = `
+    <td class="mono">${searchId}</td>
+    <td class="text-light">—</td>
+    <td>${domainSelectHtml('agent-add-sel','0-hello.com', null)}</td>
+    <td><div class="action-cell">
+      <button class="btn btn-primary btn-xs" onclick="doAgentAdd('${searchId}')">Add</button>
+    </div></td>`;
+  tbody.appendChild(addTr);
+
+  matching.forEach(({item,i}) => appendAgentRow(tbody, item, i));
+  document.getElementById('agentResult').style.display = 'block';
+}
+
+function appendAgentRow(tbody, item, idx) {
+  const tr = document.createElement('tr');
+  tr.id = `agent-row-${idx}`;
+  tr.dataset.agentId = item.agentId;
+  tr.innerHTML = `
+    <td class="mono">${item.agentId}</td>
+    <td class="mono" id="agent-now-${idx}">${item.domain}</td>
+    <td>${domainSelectHtml(`agent-to-${idx}`, item.domain, item.domain)}</td>
+    <td><div class="action-cell">
+      <button class="btn btn-outline btn-xs" onclick="doAgentUpdate(${idx})">Update</button>
+      <button class="btn btn-danger-soft btn-xs" onclick="doAgentDelete(${idx})">Delete</button>
+    </div></td>`;
+  tbody.appendChild(tr);
+}
+
+function doAgentAdd(agentId) {
+  const sel = document.getElementById('agent-add-sel').value;
+  const dup = agentStore.some(r => r.agentId === agentId && r.domain === sel);
+  if (dup) { toast('This root domain is already set for this Agent ID.','error'); return; }
+
+  const idx = agentStore.length;
+  agentStore.push({ agentId, domain: sel });
+
+  const tbody = document.getElementById('agentTbody');
+  const newTr = document.createElement('tr');
+  newTr.id = `agent-row-${idx}`;
+  newTr.dataset.agentId = agentId;
+  newTr.innerHTML = `
+    <td class="mono">${agentId}</td>
+    <td class="mono" id="agent-now-${idx}">${sel}</td>
+    <td>${domainSelectHtml(`agent-to-${idx}`, sel, sel)}</td>
+    <td><div class="action-cell">
+      <button class="btn btn-outline btn-xs" onclick="doAgentUpdate(${idx})">Update</button>
+      <button class="btn btn-danger-soft btn-xs" onclick="doAgentDelete(${idx})">Delete</button>
+    </div></td>`;
+  document.getElementById('agent-add-row').after(newTr);
+  flashRow(newTr);
+  toast('Agent domain added successfully.', 'success');
+}
+
+function doAgentUpdate(idx) {
+  const sel = document.getElementById(`agent-to-${idx}`).value;
+  const row = document.getElementById(`agent-row-${idx}`);
+  const agentId = row ? row.dataset.agentId : '';
+  const dup = agentStore.some((r,i) => i !== idx && r.agentId === agentId && r.domain === sel);
+  if (dup) { toast('This root domain is already set for this Agent ID.','error'); return; }
+  document.getElementById(`agent-now-${idx}`).textContent = sel;
+  const toSel = document.getElementById(`agent-to-${idx}`);
+  if (toSel) toSel.outerHTML = domainSelectHtml(`agent-to-${idx}`, sel, sel);
+  if (agentStore[idx]) agentStore[idx].domain = sel;
+  toast('Agent domain updated successfully.', 'success');
+}
+
+function doAgentDelete(idx) {
+  const row = document.getElementById(`agent-row-${idx}`);
+  if (row) row.remove();
+  agentStore.splice(idx, 1);
+  reindexRows('agent', 'doAgentUpdate', 'doAgentDelete');
+  toast('Agent domain deleted.', 'deleted');
+}
+
+// ── User Domain ────────────────────────────────────────────────────────────────
+// Single record per user. No Add row — search shows existing record or "no data" toast.
+let userStore = Object.assign({}, USER_DB);
+
+function doUserSearch() {
+  if (!getWebsite()) { toast('Please select a Website first.','warn'); return; }
+  const uid = document.getElementById('userIdInput').value.trim();
+  if (!uid) { toast('Please enter a User ID.','warn'); return; }
+  renderUserTable(uid);
+}
+
+function renderUserTable(uid) {
+  const tbody = document.getElementById('userTbody');
+  tbody.innerHTML = '';
+  const existing = userStore[uid];
+
+  if (!existing) {
+    toast('No record found for this User ID.','warn');
+    document.getElementById('userResult').style.display = 'none';
+    return;
+  }
+
+  // One data row — no Add row
+  const url = cacheUrl(existing.domain);
+  const tr = document.createElement('tr');
+  tr.id = 'user-row-0';
+  tr.dataset.uid = uid;
+  tr.innerHTML = `
+    <td class="mono">${uid}</td>
+    <td class="mono" id="user-now-0">${existing.domain}</td>
+    <td id="user-cache-0"><a href="${url}" target="_blank" class="cache-link">${url}</a></td>
+    <td>${domainSelectHtml('user-to-0', existing.domain, existing.domain)}</td>
+    <td><div class="action-cell">
+      <button class="btn btn-outline btn-xs" onclick="doUserUpdate('${uid}')">Update</button>
+      <button class="btn btn-warn-soft btn-xs" onclick="doUserClear('${uid}')">Clear</button>
+    </div></td>`;
+  tbody.appendChild(tr);
+  document.getElementById('userResult').style.display = 'block';
+}
+
+function doUserUpdate(uid) {
+  const sel = document.getElementById('user-to-0').value;
+  const current = userStore[uid] ? userStore[uid].domain : '';
+  if (sel === current) { toast('Root domain is already set to this value.','warn'); return; }
+  userStore[uid] = { domain: sel };
+  document.getElementById('user-now-0').textContent = sel;
+  const url = cacheUrl(sel);
+  document.getElementById('user-cache-0').innerHTML = `<a href="${url}" target="_blank" class="cache-link">${url}</a>`;
+  // refresh To select to exclude new current
+  const toSel = document.getElementById('user-to-0');
+  if (toSel) toSel.outerHTML = domainSelectHtml('user-to-0', sel, sel);
+  toast('User domain updated successfully.', 'success');
+}
+
+function doUserClear(uid) {
+  const defaultDomain = USER_DB[uid] ? USER_DB[uid].domain : DOMAIN_OPTS[0];
+  userStore[uid] = { domain: defaultDomain };
+  document.getElementById('user-now-0').textContent = defaultDomain;
+  document.getElementById('user-now-0').className = 'mono';
+  document.getElementById('user-cache-0').innerHTML = '<span class="text-light">—</span>';
+  const toSel = document.getElementById('user-to-0');
+  if (toSel) toSel.outerHTML = domainSelectHtml('user-to-0', defaultDomain, defaultDomain);
+  toast('Cleared successfully.', 'deleted');
+}
+
+// ── Generic row re-indexer ─────────────────────────────────────────────────────
+function reindexRows(prefix, updateFn, deleteFn) {
+  const tbody = document.getElementById(prefix+'Tbody');
+  if (!tbody) return;
+  tbody.querySelectorAll('tr:not(.add-row)').forEach((row, i) => {
+    row.id = `${prefix}-row-${i}`;
+    ['now','to'].forEach(part => {
+      const el = row.querySelector(`[id^="${prefix}-${part}-"]`);
+      if (el) el.id = `${prefix}-${part}-${i}`;
+    });
+    const btns = row.querySelectorAll('button');
+    if (btns[0]) btns[0].setAttribute('onclick', `${updateFn}(${i})`);
+    if (btns[1]) btns[1].setAttribute('onclick', `${deleteFn}(${i})`);
+  });
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+onWebsiteChange();
+</script>
+</body>
+</html>
